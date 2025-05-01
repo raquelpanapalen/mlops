@@ -22,7 +22,7 @@ More information on how this validation can be seen [here](Task_1.md).
 
 - **Simulated Errors**: To test robustness, artificial errors were introduced:
     - Training is aborted if the dataset contains fewer than 1000 records.
-    - A 20% chance of simulated random crash mimics unpredictable failures.
+    - A 5% chance of simulated random crash mimics unpredictable failures.
 
 - **Error Handling**: The errors are handled via try-except blocks and logged automatically to the ZenML Local Artifact Store, which can be accessed with the command `zenml login --local`. The MLflow run is explicitly ended with a `FAILED` status and no model is saved, ensuring failure is visible in the MLflow UI.
 
