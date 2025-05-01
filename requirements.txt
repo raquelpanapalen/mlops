@@ -1,0 +1,7 @@
+evidently
+pandas
+pytest
+zenml
+mlflow
+scikit-learn
+zenml[server]
