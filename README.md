@@ -33,7 +33,7 @@ To set up the environment for running tests, follow these steps:
 
 Once the environment is set up, you can run the pre-deployment tests using the following command:
 ```bash
-bash run_tests.sh
+bash run_tests_task1.sh
 ```
 A detailed explanation of all the choices for Task 1 can be found [here](docs/Task_1.md)
 
