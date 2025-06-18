@@ -12,7 +12,7 @@ from mlflow.models import infer_signature
 class TrainConfig(BaseModel):
     max_depth: int = 5
     n_estimators: int = 100
-    experiment_name: str = "airline_satisfaction_experiment"
+    flow_version: str = "v1"
 
 
 @step(enable_cache=False)
@@ -47,12 +47,12 @@ def train_model_step(
 
     # Set tracking URI and experiment
     mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    mlflow.set_experiment(config.experiment_name)
+    mlflow.set_experiment("airline_satisfaction")
 
     try:
 
         # Start MLflow run
-        with mlflow.start_run(run_name="train_airline_model") as run:
+        with mlflow.start_run(run_name="train_model") as run:
 
             if len(X_train) < 1000:
                 raise RuntimeError(
@@ -83,12 +83,13 @@ def train_model_step(
             mlflow.log_params(model.get_params())
             mlflow.log_metric("train_accuracy", train_accuracy)
             mlflow.log_metric("test_accuracy", accuracy)
+            mlflow.set_tag("flow_version", config.flow_version)
 
             # Log model with metadata
             logged_model = mlflow.sklearn.log_model(
                 sk_model=model,
                 artifact_path="model",
-                registered_model_name=f"{model.__class__.__name__}_{config.experiment_name}",
+                registered_model_name=f"{model.__class__.__name__}_{config.flow_version}",
                 signature=infer_signature(X_train, y_train),
             )
 

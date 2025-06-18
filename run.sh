@@ -1,4 +1,9 @@
 #!/bin/bash
+set -e # Exit on error
+
+# Connect to ZenML
+echo "🔗 Connecting to ZenML..."
+zenml login --local
 
 # Set up paths
 MLFLOW_BACKEND_URI="sqlite:///mlflow.db"
@@ -28,15 +33,19 @@ echo "🔗 MLflow tracking URI set to $MLFLOW_TRACKING_URI"
 echo "📊 Creating datasets..."
 python data_manager.py
 
+flow1="v1"
+flow2="v2"
+
 # Run your ZenML pipeline
 echo "🚀 Running training pipeline (version 1)..."
-python train_pipeline.py --experiment-name train_v1 --max_depth 5 --n_estimators 100
+python train_pipeline.py --flow-version "$flow1" --max_depth 5 --n_estimators 100
 
 echo "🚀 Running training pipeline (version 2)..."
-python train_pipeline.py --experiment-name train_v2 --max_depth 10 --n_estimators 200
+python train_pipeline.py --flow-version "$flow2" --max_depth 10 --n_estimators 200
 
 echo "🔍 Running monitoring (drift detection) pipeline..."
 python monitor_pipeline.py
 
-echo "🛑 Stopping MLflow server..."
-kill $MLFLOW_PID
+echo "📈 Running A/B test..."
+test_id="${flow1}_${flow2}_$(date +%s)"
+python ab_pipeline.py --flow_version_a="$flow1" --flow_version_b="$flow2" --test_id="$test_id"

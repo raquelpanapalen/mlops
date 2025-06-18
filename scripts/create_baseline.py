@@ -9,9 +9,9 @@ def create_baseline(X_train, X_test, y_train, y_test):
 
     # Set tracking URI and experiment
     mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    mlflow.set_experiment("airline_satisfaction_experiment")
+    mlflow.set_experiment("airline_satisfaction")
 
-    with mlflow.start_run(run_name="train_airline_baseline_model") as run:
+    with mlflow.start_run(run_name="train_baseline_model") as run:
         model = LogisticRegression(random_state=42)
         model.fit(X_train, y_train)
 
@@ -32,7 +32,7 @@ def create_baseline(X_train, X_test, y_train, y_test):
         logged_model = mlflow.sklearn.log_model(
             sk_model=model,
             artifact_path="model",
-            registered_model_name=f"{model.__class__.__name__}_airline_model",
+            registered_model_name=f"{model.__class__.__name__}_baseline",
             signature=infer_signature(X_train, y_train),
         )
 

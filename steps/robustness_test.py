@@ -32,7 +32,7 @@ def robustness_test_step(
     # Load the baseline model
     try:
         baseline_model = mlflow.pyfunc.load_model(
-            "models:/LogisticRegression_airline_model/latest"
+            "models:/LogisticRegression_baseline/latest"
         )
     except Exception as e:
         # Create a baseline model if it doesn't exist
