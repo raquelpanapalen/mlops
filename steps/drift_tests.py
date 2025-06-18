@@ -1,14 +1,22 @@
 from zenml import step
-import mlflow
-from scripts.utils import get_golden_set
+import pandas as pd
+from evidently.test_suite import TestSuite
+from evidently.tests import (
+    TestNumberOfDriftedColumns,
+    TestShareOfDriftedColumns,
+)
 
 
 @step
-def drift_test(model_uri: str):
-    """Test the robustness of the model by checking its performance on a perturbed dataset."""
+def drift_test_step(train_data: pd.DataFrame, unseen_data: pd.DataFrame) -> float:
+    data_drift_dataset_tests = TestSuite(
+        tests=[
+            TestNumberOfDriftedColumns(),
+            TestShareOfDriftedColumns(),
+        ]
+    )
 
-    # Load the model
-    model = mlflow.pyfunc.load_model(model_uri)
-
-    # Load the current dataset
-    _, data_cur = get_golden_set()
+    data_drift_dataset_tests.run(reference_data=train_data, current_data=unseen_data)
+    for result in data_drift_dataset_tests.as_dict()["tests"]:
+        if result["status"] != "SUCCESS":
+            raise ValueError(f"Data drift test failed: {result['description']}")

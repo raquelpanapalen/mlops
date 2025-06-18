@@ -1,6 +1,5 @@
 from zenml import step
 import pandas as pd
-import logging
 from evidently.test_suite import TestSuite
 from evidently.tests import (
     TestNumberOfColumns,
@@ -19,14 +18,11 @@ from evidently.tests import (
     TestColumnsType,
     TestValueRange,
 )
-from scripts.utils import get_golden_set
 
 
 @step
-def data_validation_step(df: pd.DataFrame) -> pd.DataFrame:
+def data_validation_step(data_ref: pd.DataFrame, data_cur: pd.DataFrame):
     """Validate data integrity and distribution. Returns the current dataset if all checks pass."""
-
-    data_ref, data_cur = get_golden_set(df)
 
     # --- SUBTASK 1: Integrity Tests ---
     integrity_tests = [
@@ -82,5 +78,3 @@ def data_validation_step(df: pd.DataFrame) -> pd.DataFrame:
         report = value_test.as_dict()["tests"][0]
         if report["status"] != "SUCCESS":
             raise ValueError(f"Value range check failed: {report['description']}")
-
-    return data_ref

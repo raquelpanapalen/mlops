@@ -5,17 +5,15 @@ from pathlib import Path
 from evidently.test_suite import TestSuite
 from evidently.tests import *
 
-from utils import get_golden_set
-
-
 # This script is used to test the data integrity and quality of the airline passenger satisfaction dataset.
 # The tests are based on the Evidently library, which provides a framework for testing data quality and integrity.
 # The tests include checking for missing values, duplicates, and data distribution for both categorical and numerical features.
 # The tests are run using pytest, and the results are reported in a structured format.
 
 data_dir = Path(os.path.dirname(__file__)).parent / "data"
-df = pd.read_csv(data_dir / "airline_passenger_satisfaction.csv")
-data_ref, data_cur = get_golden_set(df)
+# Load the golden set and current set
+data_ref = pd.read_csv(data_dir / "processed" / "golden_set.csv")
+data_cur = pd.read_csv(data_dir / "processed" / "current_set.csv")
 
 
 @pytest.fixture

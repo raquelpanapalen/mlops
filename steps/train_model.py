@@ -1,3 +1,5 @@
+import random
+from pydantic import BaseModel
 import mlflow.entities
 from zenml import step
 import pandas as pd
@@ -6,16 +8,22 @@ from sklearn.metrics import accuracy_score
 import mlflow
 from mlflow.models import infer_signature
 
-from scripts.utils import preprocess_data
-import random
+
+class TrainConfig(BaseModel):
+    max_depth: int = 5
+    n_estimators: int = 100
+    experiment_name: str = "airline_satisfaction_experiment"
 
 
 @step(enable_cache=False)
-def train_model_step(df: pd.DataFrame) -> str:
-    # Preprocessing
-    X_train, X_test, y_train, y_test = preprocess_data(df)
-
-    """"
+def train_model_step(
+    X_train: pd.DataFrame,
+    X_test: pd.DataFrame,
+    y_train: pd.Series,
+    y_test: pd.Series,
+    config: TrainConfig,
+) -> str:
+    """ "
     Training Step with Fault Injection, Error Handling, and MLflow Tracking.
 
     Simulates failure scenarios for robustness:
@@ -39,7 +47,7 @@ def train_model_step(df: pd.DataFrame) -> str:
 
     # Set tracking URI and experiment
     mlflow.set_tracking_uri("http://127.0.0.1:5000")
-    mlflow.set_experiment("airline_satisfaction_experiment")
+    mlflow.set_experiment(config.experiment_name)
 
     try:
 
@@ -56,7 +64,11 @@ def train_model_step(df: pd.DataFrame) -> str:
                 raise RuntimeError("Simulated random crash during training")
 
             # Train model
-            model = RandomForestClassifier(n_estimators=100, random_state=42)
+            model = RandomForestClassifier(
+                max_depth=config.max_depth,
+                n_estimators=config.n_estimators,
+                random_state=42,
+            )
             model.fit(X_train, y_train)
 
             # Evaluate model
@@ -76,7 +88,7 @@ def train_model_step(df: pd.DataFrame) -> str:
             logged_model = mlflow.sklearn.log_model(
                 sk_model=model,
                 artifact_path="model",
-                registered_model_name=f"{model.__class__.__name__}_airline_model",
+                registered_model_name=f"{model.__class__.__name__}_{config.experiment_name}",
                 signature=infer_signature(X_train, y_train),
             )
 

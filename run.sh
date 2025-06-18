@@ -24,8 +24,19 @@ sleep 5
 export MLFLOW_TRACKING_URI="http://127.0.0.1:$MLFLOW_PORT"
 echo "🔗 MLflow tracking URI set to $MLFLOW_TRACKING_URI"
 
-# Run your ZenML pipeline
-echo "🚀 Running the ZenML pipeline..."
-python zenml_pipeline.py
+# Create golden (reference) / train / test datasets
+echo "📊 Creating datasets..."
+python data_manager.py
 
-echo "✅ Pipeline run completed."
+# Run your ZenML pipeline
+echo "🚀 Running training pipeline (version 1)..."
+python train_pipeline.py --experiment-name train_v1 --max_depth 5 --n_estimators 100
+
+echo "🚀 Running training pipeline (version 2)..."
+python train_pipeline.py --experiment-name train_v2 --max_depth 10 --n_estimators 200
+
+echo "🔍 Running monitoring (drift detection) pipeline..."
+python monitor_pipeline.py
+
+echo "🛑 Stopping MLflow server..."
+kill $MLFLOW_PID

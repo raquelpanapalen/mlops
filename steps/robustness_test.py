@@ -1,7 +1,6 @@
 from zenml import step
 import mlflow
 import pandas as pd
-from scripts.utils import preprocess_data
 from evidently.test_suite import TestSuite
 from evidently.tests import (
     TestAccuracyScore,
@@ -18,14 +17,17 @@ from scripts.create_baseline import create_baseline
 
 
 @step(enable_cache=False)
-def robustness_test_step(model_uri: str, df: pd.DataFrame):
+def robustness_test_step(
+    model_uri: str,
+    X_train: pd.DataFrame,
+    X_test: pd.DataFrame,
+    y_train: pd.Series,
+    y_test: pd.Series,
+):
     """Test the robustness of the model by checking its performance on a perturbed dataset."""
 
     # Load the model
     model = mlflow.pyfunc.load_model(model_uri)
-
-    # Load the current dataset
-    X_train, X_test, y_train, y_test = preprocess_data(df)
 
     # Load the baseline model
     try:
