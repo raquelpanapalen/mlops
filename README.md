@@ -38,21 +38,34 @@ bash run_tests.sh
 A detailed explanation of all the choices for Task 1 can be found [here](docs/Task_1.md)
 
 ### Scripts
-- **Notebook/Utils**: A Jupyter notebook (visualization purposes) and utils script for creating the golden set.
+- **Notebook/data manager**: A Jupyter notebook (visualization purposes) and `data_manager.py` script for creating the golden set.
 - **Task 1 Implementation**: The [`scripts/task1.py`](scripts/task1.py) file contains the Python implementation of all the tests.
 
-## TASK 2
+## TASK 2 & 3
 
-Once the environment is set up, you can run the Task 2 pipeline using the following command:
+> 🛠️ **Note**: Task 2 has now been fully integrated into Task 3.  
+> The updated implementation for Task 3 includes all functionality and objectives from Task 2.
+
+- 📄 Detailed documentation for both tasks is available:
+  - [Task 2 Documentation](docs/Task_2.md)
+  - [Task 3 Documentation](docs/Task_3.md)
+
+---
+
+### 🚀 Running the Pipelines
+
+Once the environment is set up, you can execute all the pipelines for Task 3 by running:
+
 ```bash
-bash run_pipeline.sh
+bash run.sh
 ```
 
-A detailed explanation of all the choices for Task 2 can be found [here](docs/Task_2.md)
+This script orchestrates all required flows (pipelines) and includes post-deployment testing such as data drift detection, versioned inference, and A/B testing.
 
-### Scripts
 
-- **Steps**: You can find all the different step scripts in the folder [`steps`](steps/)
-- **Task 2 Implementation**: The main [`zenml_pipeline.py`](zenml_pipeline.py) file contains the Python implementation that runs the ZenML pipeline.
+### 📁 Project Structure
+- **Steps**: All modular step scripts used in the pipeline are located in `steps/`
+- **Pipelines**: The various ZenML pipelines (flows) for Task 3 are implemented in the pipelines/ directory
+- **Runner Script**: The `run.sh` script executes all pipelines in the correct sequence as required by Task 3
 
 
